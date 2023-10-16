@@ -1,0 +1,59 @@
+version: 1.0
+
+input:
+  - json_data
+  - summary
+
+vars:
+  - ticket_id: ""
+  - ticket_key: ""
+  - ticket_url: ""
+
+tasks:
+# Search existing ticket in jira based on summary
+  search_existing_ticket:
+    action: jira.search_issues
+    input:
+      query: "type='Bug' AND summary ~ '{{ ctx().summary }}' AND NOT status IN ('Done','Cancelled')"
+    next:
+      - when: <% succeeded() and task(search_existing_ticket).result.result.len() < 1 %>
+        do: create_new_ticket
+      - when: <% succeeded() and task(search_existing_ticket).result.result.len() >= 1 %>
+        publish:
+          # Sort existing tickets ascending
+          - existing_tickets: "<% task(search_existing_ticket).result.result.key.orderBy($) %>"
+        do: comment_existing_ticket
+
+# If there is no existing ticket for the summary, we create ne wone
+  create_new_ticket:
+    action: jira.create_issue
+    input:
+      summary: "{{ ctx().summary }}"
+      type: "Bug"
+      extra_fields: >
+        {"priority": {"name": "Medium"},
+        "labels": {{ ctx().label }},}
+      description: |
+        Stackstorm Test    
+    next:
+      - when: <% succeeded() %>
+        publish:
+          - ticket_id: "<% task(create_new_ticket).result.result.id %>"
+          - ticket_key: "<% task(create_new_ticket).result.result.key %>"
+          - ticket_url: "<% task(create_new_ticket).result.result.url %>"
+        do: comment_existing_ticket
+
+# If there exist one ore more tickets corresponding to input summaryw e just comment on those tickets
+  comment_existing_ticket:
+    with: ticket in <% ctx().existing_tickets %>
+    action: jira.comment_issue
+    input:
+      issue_key: <% item(ticket)  %>
+      comment_text: |
+        Stackstorm Test comment
+
+# 
+output:
+  - jira_ticket_id: "<% ctx().ticket_id %>"
+  - jira_ticket_key: "<% ctx().ticket_key %>"
+  - jira_ticket_url: "<% ctx().ticket_url %>"

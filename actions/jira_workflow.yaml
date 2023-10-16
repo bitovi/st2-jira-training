@@ -1,0 +1,13 @@
+---
+name: jira_workflow
+description: Workflow for jira pack training
+runner_type: orquesta
+entry_point: workflows/jira-workflow.yaml
+enabled: true
+parameters:
+  json_data:
+    required: true
+    type: object
+  summary:
+    required: true
+    type: string

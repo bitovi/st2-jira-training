@@ -1,2 +1,2 @@
-# st2-jira-training
-St2 Github Integration pack for StackStorm Training
+# jira
+Stackstorm pack containing workflows, actions and sensors for Jira related tasks

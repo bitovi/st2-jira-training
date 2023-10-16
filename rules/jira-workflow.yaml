@@ -1,0 +1,28 @@
+---
+name: jira-workflow
+description: In response to a Jira trigger, schedule a workflow
+enabled: true
+
+trigger:
+  type: core.st2.webhook
+  parameters:
+      url: "st2_jira_webhook"
+
+criteria:
+  trigger.body.issue.fields.project.key:
+    type: regex
+    pattern: "(DEVOPS)"
+  trigger.body.issue.fields.status.name:
+    type: regex
+    pattern: "(?!Cancelled|Done)"
+  trigger.body.webhookEvent:
+    type: regex
+    pattern: "jira:issue_(created|updated)"
+  trigger.body.issue_event_type_name:
+    type: nequals
+    pattern: "issue_commented"
+
+action:
+  ref: st2-jira-training.jira_workflow
+  parameters:
+    json_data: "{{ trigger.body }}"
