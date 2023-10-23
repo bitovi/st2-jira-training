@@ -23,7 +23,7 @@ criteria:
     pattern: "issue_commented"
 
 action:
-  ref: raining_jira.jira_workflow
+  ref: training_jira.jira_workflow
   parameters:
     json_data: "{{ trigger.body }}"
     summary: "STackstorm Training"
