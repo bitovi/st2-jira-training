@@ -18,7 +18,7 @@ tasks:
     next:
       - when: <% succeeded() and task(search_existing_ticket).result.result.len() < 1 %>
         publish:
-          - label: "st2-testing"
+          - label: "["st2-testing"]"
         do: create_new_ticket
       - when: <% succeeded() and task(search_existing_ticket).result.result.len() >= 1 %>
         publish:
