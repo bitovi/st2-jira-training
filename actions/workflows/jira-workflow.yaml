@@ -31,7 +31,6 @@ tasks:
     action: jira.create_issue
     input:
       summary: "{{ ctx().summary }}"
-      type: "Bug"
       extra_fields: >
         {"priority": {"name": "Medium"},
         "labels": {{ ctx().label }},}
