@@ -14,11 +14,11 @@ tasks:
   search_existing_ticket:
     action: jira.search_issues
     input:
-      query: "type='Bug' AND summary ~ '{{ ctx().summary }}' AND NOT status IN ('Done','Cancelled')"
+      query: "summary ~ '{{ ctx().summary }}'"
     next:
       - when: <% succeeded() and task(search_existing_ticket).result.result.len() < 1 %>
         publish:
-          - label: "test"
+          - label: "st2-testing"
         do: create_new_ticket
       - when: <% succeeded() and task(search_existing_ticket).result.result.len() >= 1 %>
         publish:
