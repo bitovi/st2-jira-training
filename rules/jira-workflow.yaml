@@ -26,4 +26,4 @@ action:
   ref: training_jira.jira_workflow
   parameters:
     json_data: "{{ trigger.body }}"
-    summary: "STackstorm Training"
+    summary: "Testing from StackStorm4"
