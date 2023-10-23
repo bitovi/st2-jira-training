@@ -17,6 +17,8 @@ tasks:
       query: "type='Bug' AND summary ~ '{{ ctx().summary }}' AND NOT status IN ('Done','Cancelled')"
     next:
       - when: <% succeeded() and task(search_existing_ticket).result.result.len() < 1 %>
+        publish:
+          - label: "test"
         do: create_new_ticket
       - when: <% succeeded() and task(search_existing_ticket).result.result.len() >= 1 %>
         publish:
@@ -41,7 +43,6 @@ tasks:
           - ticket_id: "<% task(create_new_ticket).result.result.id %>"
           - ticket_key: "<% task(create_new_ticket).result.result.key %>"
           - ticket_url: "<% task(create_new_ticket).result.result.url %>"
-        do: comment_existing_ticket
 
 # If there exist one ore more tickets corresponding to input summaryw e just comment on those tickets
   comment_existing_ticket:
@@ -52,7 +53,6 @@ tasks:
       comment_text: |
         Stackstorm Test comment
 
-# 
 output:
   - jira_ticket_id: "<% ctx().ticket_id %>"
   - jira_ticket_key: "<% ctx().ticket_key %>"
