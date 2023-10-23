@@ -30,10 +30,14 @@ tasks:
   create_new_ticket:
     action: jira.create_issue
     input:
+      project: "DEVOPS"
       summary: "{{ ctx().summary }}"
+      type: "Bug"
       extra_fields: >
-        {"priority": {"name": "Medium"},
-        "labels": {{ ctx().label }},}
+        {
+        "labels": "{{ ctx().label }}",
+        "priority": {"name":"Low"}
+        }
       description: |
         Stackstorm Test    
     next:
