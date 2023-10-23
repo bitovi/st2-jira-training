@@ -14,7 +14,7 @@ tasks:
   search_existing_ticket:
     action: jira.search_issues
     input:
-      query: "project='DEVOPS' AND assignee = 'Karamveer Kaur' AND status = 'Refinement' AND summary ~ 'STackstorm Training'"
+      query: "project='DEVOPS' AND assignee = 'Karamveer Kaur' AND status = 'Refinement' AND summary ~ '{{ ctx().summary }}'"
     next:
       - when: <% succeeded() and task(search_existing_ticket).result.result.len() < 1 %>
         publish:
