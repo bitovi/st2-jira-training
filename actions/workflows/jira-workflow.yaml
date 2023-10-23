@@ -18,7 +18,7 @@ tasks:
     next:
       - when: <% succeeded() and task(search_existing_ticket).result.result.len() < 1 %>
         publish:
-          - label: "["st2-testing"]"
+          - priority: "Low"
         do: create_new_ticket
       - when: <% succeeded() and task(search_existing_ticket).result.result.len() >= 1 %>
         publish:
@@ -35,8 +35,8 @@ tasks:
       type: "Bug"
       extra_fields: >
         {
-        "labels": "{{ ctx().label }}",
-        "priority": {"name":"Low"}
+        "labels": ["st2-testing"],
+        "priority": {"name":"{{ ctx().priority }}"}
         }
       description: |
         Stackstorm Test    
