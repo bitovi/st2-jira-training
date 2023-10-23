@@ -10,6 +10,24 @@ vars:
   - ticket_url: ""
 
 tasks:
+  notify:
+    action: core.echo
+    input:
+      message: |
+        Received data
+    next:
+      - when: <% succeeded() %>
+        publish:
+          - priority: "Low"
+        do: search_existing_ticket
+
+  parallel_test:     
+    action: core.noop
+    next:
+      - when: <% succeeded() %>
+        publish:
+          - parallel_run: "successful"
+
 # Search existing ticket in jira based on summary
   search_existing_ticket:
     action: jira.search_issues
@@ -17,8 +35,6 @@ tasks:
       query: "project='DEVOPS' AND assignee = 'Karamveer Kaur' AND status = 'Refinement' AND summary ~ '{{ ctx().summary }}'"
     next:
       - when: <% succeeded() and task(search_existing_ticket).result.result.len() < 1 %>
-        publish:
-          - priority: "Low"
         do: create_new_ticket
       - when: <% succeeded() and task(search_existing_ticket).result.result.len() >= 1 %>
         publish:
